@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hocalar - UNİTE</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <nav>
+        <div class="container">
+            <div class="logo">🎓 UNİTE</div>
+            <ul class="nav-links">
+                <li><a href="/">Ana Sayfa</a></li>
+                <li><a href="/chatbot.html">Chatbot</a></li>
+                <li><a href="/courses.html">Dersler</a></li>
+                <li><a href="/professors.html" class="active">Hocalar</a></li>
+                <li><a href="/matching.html">Eşleştirme</a></li>
+                <li><a href="/activities.html">Etkinlikler</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="hero" style="padding: 2rem 0;">
+                <h1>👨‍🏫 Hocalar</h1>
+                <p>Öğretim Üyeleri ve Değerlendirmeler</p>
+            </div>
+
+            <div id="professorsGrid" class="grid grid-3">
+                <div class="card text-center" style="grid-column: 1 / -1;">
+                    <div class="spinner" style="margin: 2rem auto;"></div>
+                    <p class="text-muted">Hocalar yükleniyor...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        const professorsGrid = document.getElementById('professorsGrid');
+
+        async function loadProfessors() {
+            try {
+                const response = await fetch(`${API_URL}/professors`);
+                const professors = await response.json();
+                displayProfessors(professors);
+            } catch (error) {
+                console.error('Error loading professors:', error);
+                professorsGrid.innerHTML = '<div class="card text-center" style="grid-column: 1 / -1;"><p class="text-muted">❌ Hocalar yüklenirken hata oluştu</p></div>';
+            }
+        }
+
+        function displayProfessors(professors) {
+            if (professors.length === 0) {
+                professorsGrid.innerHTML = '<div class="card text-center" style="grid-column: 1 / -1;"><p class="text-muted">Hoca bulunamadı</p></div>';
+                return;
+            }
+
+            professorsGrid.innerHTML = professors.map(prof => {
+                const avgRating = prof.studentReviews && prof.studentReviews.length > 0
+                    ? (prof.studentReviews.reduce((sum, r) => sum + r.rating, 0) / prof.studentReviews.length).toFixed(1)
+                    : 'N/A';
+
+                return `
+                    <div class="card">
+                        <div class="text-center" style="margin-bottom: 1rem;">
+                            <div style="width: 80px; height: 80px; margin: 0 auto 1rem; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+                                👨‍🏫
+                            </div>
+                            <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem;">${prof.title} ${prof.name}</h3>
+                            <p class="text-muted" style="font-size: 0.9rem;">${prof.department}</p>
+                        </div>
+
+                        ${avgRating !== 'N/A' ? `
+                            <div class="text-center mb-1">
+                                <span class="badge badge-primary">⭐ ${avgRating}/5 (${prof.studentReviews.length} değerlendirme)</span>
+                            </div>
+                        ` : ''}
+
+                        <div style="font-size: 0.9rem;">
+                            <p><strong>📧 E-posta:</strong><br/>${prof.email}</p>
+                            ${prof.officeLocation ? `<p><strong>🚪 Ofis:</strong> ${prof.officeLocation}</p>` : ''}
+                            ${prof.officeHours ? `<p><strong>⏰ Ofis Saatleri:</strong> ${prof.officeHours}</p>` : ''}
+                            
+                            ${prof.courses && prof.courses.length > 0 ? `
+                                <p class="mt-1"><strong>📚 Verdiği Dersler:</strong></p>
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                    ${prof.courses.slice(0, 3).map(c => `
+                                        <span class="badge badge-secondary" style="font-size: 0.8rem;">${c.code}</span>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <button class="btn btn-primary mt-2" style="width: 100%;" onclick="showProfDetails('${prof._id}')">
+                            Detayları Gör
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showProfDetails(profId) {
+            alert('Hoca detayları modal pencerede gösterilebilir. ID: ' + profId);
+        }
+
+        loadProfessors();
+    </script>
+</body>
+
+</html>

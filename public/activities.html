@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etkinlikler - UNİTE</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <nav>
+        <div class="container">
+            <div class="logo">🎓 UNİTE</div>
+            <ul class="nav-links">
+                <li><a href="/">Ana Sayfa</a></li>
+                <li><a href="/chatbot.html">Chatbot</a></li>
+                <li><a href="/courses.html">Dersler</a></li>
+                <li><a href="/professors.html">Hocalar</a></li>
+                <li><a href="/matching.html">Eşleştirme</a></li>
+                <li><a href="/activities.html" class="active">Etkinlikler</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="hero" style="padding: 2rem 0;">
+                <h1>🎉 Sosyal Etkinlikler</h1>
+                <p>Kampüs ve Çevre Aktiviteleri</p>
+            </div>
+
+            <!-- Category Filter -->
+            <div class="card mb-2">
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn btn-secondary" onclick="filterByCategory('')">Tümü</button>
+                    <button class="btn btn-secondary" onclick="filterByCategory('Akademik')">📚 Akademik</button>
+                    <button class="btn btn-secondary" onclick="filterByCategory('Sosyal')">🎭 Sosyal</button>
+                    <button class="btn btn-secondary" onclick="filterByCategory('Spor')">⚽ Spor</button>
+                    <button class="btn btn-secondary" onclick="filterByCategory('Sanat')">🎨 Sanat</button>
+                    <button class="btn btn-secondary" onclick="filterByCategory('Kariyer')">💼 Kariyer</button>
+                </div>
+            </div>
+
+            <div id="activitiesGrid" class="grid grid-2">
+                <div class="card text-center" style="grid-column: 1 / -1;">
+                    <div class="spinner" style="margin: 2rem auto;"></div>
+                    <p class="text-muted">Etkinlikler yükleniyor...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        const activitiesGrid = document.getElementById('activitiesGrid');
+        let allActivities = [];
+
+        async function loadActivities() {
+            try {
+                const response = await fetch(`${API_URL}/activities`);
+                allActivities = await response.json();
+                displayActivities(allActivities);
+            } catch (error) {
+                console.error('Error loading activities:', error);
+                activitiesGrid.innerHTML = '<div class="card text-center" style="grid-column: 1 / -1;"><p class="text-muted">❌ Etkinlikler yüklenirken hata oluştu</p></div>';
+            }
+        }
+
+        function displayActivities(activities) {
+            if (activities.length === 0) {
+                activitiesGrid.innerHTML = '<div class="card text-center" style="grid-column: 1 / -1;"><p class="text-muted">Etkinlik bulunamadı</p></div>';
+                return;
+            }
+
+            activitiesGrid.innerHTML = activities.map(activity => {
+                const date = new Date(activity.date);
+                const formattedDate = date.toLocaleDateString('tr-TR', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                const categoryIcon = {
+                    'Akademik': '📚',
+                    'Sosyal': '🎭',
+                    'Spor': '⚽',
+                    'Sanat': '🎨',
+                    'Kariyer': '💼',
+                    'Gönüllülük': '🤝',
+                    'Diğer': '📌'
+                }[activity.category] || '📌';
+
+                const available = activity.capacity ? activity.capacity - activity.registeredStudents.length : null;
+
+                return `
+                    <div class="card">
+                        <div class="card-header">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <h3 style="font-size: 1.25rem; flex: 1;">${activity.title}</h3>
+                                <span class="badge badge-primary">${categoryIcon} ${activity.category}</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p class="text-muted mb-1">${activity.description.substring(0, 150)}...</p>
+
+                            <div style="font-size: 0.95rem; margin: 1rem 0;">
+                                <p><strong>📅 Tarih:</strong> ${formattedDate}</p>
+                                <p><strong>⏰ Saat:</strong> ${activity.time}</p>
+                                <p><strong>📍 Konum:</strong> ${activity.location?.name || 'Belirtilmemiş'}</p>
+                                <p><strong>👥 Organizatör:</strong> ${activity.organizer}</p>
+                                ${available !== null ? `<p><strong>🎫 Kalan Kontenjan:</strong> ${available}/${activity.capacity}</p>` : ''}
+                            </div>
+
+                            ${activity.benefits && activity.benefits.length > 0 ? `
+                                <div class="mb-1">
+                                    <strong style="font-size: 0.9rem;">✨ Kazanımlar:</strong>
+                                    <ul style="margin: 0.5rem 0; padding-left: 1.5rem; font-size: 0.9rem;">
+                                        ${activity.benefits.slice(0, 2).map(benefit => `<li>${benefit}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            ` : ''}
+
+                            <button class="btn btn-accent" style="width: 100%;" onclick="registerForActivity('${activity._id}')">
+                                📝 Kayıt Ol
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterByCategory(category) {
+            if (!category) {
+                displayActivities(allActivities);
+                return;
+            }
+
+            const filtered = allActivities.filter(a => a.category === category);
+            displayActivities(filtered);
+        }
+
+        function registerForActivity(activityId) {
+            alert('Etkinliğe kayıt işlemi demo modda. ID: ' + activityId);
+            // In real implementation, this would register the user
+        }
+
+        loadActivities();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dersler - UNİTE</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <nav>
+        <div class="container">
+            <div class="logo">🎓 UNİTE</div>
+            <ul class="nav-links">
+                <li><a href="/">Ana Sayfa</a></li>
+                <li><a href="/chatbot.html">Chatbot</a></li>
+                <li><a href="/courses.html" class="active">Dersler</a></li>
+                <li><a href="/professors.html">Hocalar</a></li>
+                <li><a href="/matching.html">Eşleştirme</a></li>
+                <li><a href="/activities.html">Etkinlikler</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="hero" style="padding: 2rem 0;">
+                <h1>📚 Dersler</h1>
+                <p>Bilgisayar Mühendisliği Bölümü Ders Kataloğu</p>
+            </div>
+
+            <!-- Filters -->
+            <div class="card mb-2">
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <select id="semesterFilter" class="chat-input" style="flex: 1; min-width: 200px;">
+                        <option value="">Tüm Dönemler</option>
+                        <option value="1">1. Yarıyıl</option>
+                        <option value="2">2. Yarıyıl</option>
+                        <option value="3">3. Yarıyıl</option>
+                        <option value="4">4. Yarıyıl</option>
+                        <option value="5">5. Yarıyıl</option>
+                        <option value="6">6. Yarıyıl</option>
+                        <option value="7">7. Yarıyıl</option>
+                        <option value="8">8. Yarıyıl</option>
+                    </select>
+                    <select id="difficultyFilter" class="chat-input" style="flex: 1; min-width: 200px;">
+                        <option value="">Tüm Zorluklar</option>
+                        <option value="Kolay">Kolay</option>
+                        <option value="Orta">Orta</option>
+                        <option value="Zor">Zor</option>
+                        <option value="Çok Zor">Çok Zor</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Courses Grid -->
+            <div id="coursesGrid" class="grid grid-2">
+                <div class="card text-center" style="grid-column: 1 / -1;">
+                    <div class="spinner" style="margin: 2rem auto;"></div>
+                    <p class="text-muted">Dersler yükleniyor...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        const coursesGrid = document.getElementById('coursesGrid');
+        const semesterFilter = document.getElementById('semesterFilter');
+        const difficultyFilter = document.getElementById('difficultyFilter');
+
+        let allCourses = [];
+
+        async function loadCourses() {
+            try {
+                const response = await fetch(`${API_URL}/courses`);
+                allCourses = await response.json();
+                displayCourses(allCourses);
+            } catch (error) {
+                console.error('Error loading courses:', error);
+                coursesGrid.innerHTML = '<div class="card text-center" style="grid-column: 1 / -1;"><p class="text-muted">❌ Dersler yüklenirken hata oluştu</p></div>';
+            }
+        }
+
+        function displayCourses(courses) {
+            if (courses.length === 0) {
+                coursesGrid.innerHTML = '<div class="card text-center" style="grid-column: 1 / -1;"><p class="text-muted">Ders bulunamadı</p></div>';
+                return;
+            }
+
+            coursesGrid.innerHTML = courses.map(course => `
+                <div class="card">
+                    <div class="card-header">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <h3 style="font-size: 1.25rem; margin-bottom: 0.25rem;">${course.name}</h3>
+                                <p class="text-muted" style="font-size: 0.9rem;">${course.code}</p>
+                            </div>
+                            <span class="badge badge-${getDifficultyClass(course.difficulty)}">${course.difficulty}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-muted mb-1" style="font-size: 0.95rem;">${course.description.substring(0, 120)}...</p>
+                        
+                        <div style="display: flex; gap: 1rem; margin: 1rem 0; font-size: 0.9rem;">
+                            <div>📅 <strong>${course.semester}. Yarıyıl</strong></div>
+                            <div>📊 <strong>${course.credits} Kredi</strong></div>
+                        </div>
+
+                        ${course.professors && course.professors.length > 0 ? `
+                            <p class="text-muted" style="font-size: 0.9rem;">
+                                👨‍🏫 ${course.professors.map(p => p.title + ' ' + p.name).join(', ')}
+                            </p>
+                        ` : ''}
+
+                        ${course.studentComments && course.studentComments.length > 0 ? `
+                            <div style="margin-top: 1rem;">
+                                <span class="badge badge-primary">
+                                    ⭐ ${(course.studentComments.reduce((sum, c) => sum + c.rating, 0) / course.studentComments.length).toFixed(1)}/5
+                                    (${course.studentComments.length} yorum)
+                                </span>
+                            </div>
+                        ` : ''}
+
+                        <div style="margin-top: 1rem;">
+                            <button class="btn btn-primary" onclick="showCourseDetails('${course._id}')">
+                                Detayları Gör
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getDifficultyClass(difficulty) {
+            switch (difficulty) {
+                case 'Kolay': return 'success';
+                case 'Orta': return 'primary';
+                case 'Zor': return 'warning';
+                case 'Çok Zor': return 'danger';
+                default: return 'primary';
+            }
+        }
+
+        function filterCourses() {
+            const semester = semesterFilter.value;
+            const difficulty = difficultyFilter.value;
+
+            let filtered = allCourses;
+
+            if (semester) {
+                filtered = filtered.filter(c => c.semester == semester);
+            }
+
+            if (difficulty) {
+                filtered = filtered.filter(c => c.difficulty === difficulty);
+            }
+
+            displayCourses(filtered);
+        }
+
+        function showCourseDetails(courseId) {
+            alert('Ders detayları modal pencerede gösterilebilir. ID: ' + courseId);
+            // In a real implementation, this would open a modal with full course details
+        }
+
+        semesterFilter.addEventListener('change', filterCourses);
+        difficultyFilter.addEventListener('change', filterCourses);
+
+        loadCourses();
+    </script>
+</body>
+
+</html>

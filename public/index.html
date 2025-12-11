@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNİTE - Üniversite Chatbot Platformu</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="logo">🎓 UNİTE</div>
+            <ul class="nav-links">
+                <li><a href="/" class="active">Ana Sayfa</a></li>
+                <li><a href="/chatbot.html">Chatbot</a></li>
+                <li><a href="/courses.html">Dersler</a></li>
+                <li><a href="/professors.html">Hocalar</a></li>
+                <li><a href="/matching.html">Eşleştirme</a></li>
+                <li><a href="/activities.html">Etkinlikler</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <h1>🌟 UNİTE'ye Hoş Geldiniz</h1>
+                <p>Dokuz Eylül Üniversitesi öğrencileri için yapay zeka destekli bilgi paylaşım ve eşleştirme platformu. Ders bilgilerinden sosyal etkinliklere, hoca değerlendirmelerinden öğrenci eşleştirmeye kadar ihtiyacınız olan her şey burada!</p>
+                <div class="hero-buttons">
+                    <a href="/chatbot.html" class="btn btn-primary">💬 Chatbot'u Dene</a>
+                    <a href="/matching.html" class="btn btn-secondary">👥 Eşleşme Bul</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="container">
+            <h2 class="text-center mb-3">✨ Özellikler</h2>
+            <div class="grid grid-3">
+                <div class="card feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>Yapay Zeka Asistanı</h3>
+                    <p class="text-muted">Dersler, hocalar ve kampüs hakkında her sorunuza anında yanıt veren akıllı chatbot.</p>
+                    <a href="/chatbot.html" class="btn btn-primary mt-2">Hemen Dene</a>
+                </div>
+
+                <div class="card feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3>Ders Bilgileri</h3>
+                    <p class="text-muted">Tüm dersler için detaylı içerik, zorluk seviyesi ve öğrenci yorumları.</p>
+                    <a href="/courses.html" class="btn btn-primary mt-2">Dersleri Gör</a>
+                </div>
+
+                <div class="card feature-card">
+                    <div class="feature-icon">👨‍🏫</div>
+                    <h3>Hoca Değerlendirmeleri</h3>
+                    <p class="text-muted">Hocalar hakkında öğrenci görüşleri, iletişim bilgileri ve ders tarzları.</p>
+                    <a href="/professors.html" class="btn btn-primary mt-2">Hocaları İncele</a>
+                </div>
+
+                <div class="card feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3>Öğrenci Eşleştirme</h3>
+                    <p class="text-muted">Aldığınız dersi daha önce alan üst sınıf öğrencilerle eşleşin, mentörlük alın.</p>
+                    <a href="/matching.html" class="btn btn-primary mt-2">Eşleş</a>
+                </div>
+
+                <div class="card feature-card">
+                    <div class="feature-icon">🎉</div>
+                    <h3>Sosyal Etkinlikler</h3>
+                    <p class="text-muted">Kampüs çevresindeki tüm sosyal aktiviteleri keşfedin ve katılın.</p>
+                    <a href="/activities.html" class="btn btn-primary mt-2">Etkinlikleri Gör</a>
+                </div>
+
+                <div class="card feature-card">
+                    <div class="feature-icon">📖</div>
+                    <h3>Bilgi Havuzu</h3>
+                    <p class="text-muted">Bölüm kültürü, sınavlar, projeler hakkında değerli bilgiler.</p>
+                    <a href="/chatbot.html" class="btn btn-primary mt-2">Keşfet</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Stats -->
+        <section class="container mt-3">
+            <h2 class="text-center mb-3">📊 İstatistikler</h2>
+            <div class="grid grid-4">
+                <div class="card text-center">
+                    <div class="feature-icon">📚</div>
+                    <h3 id="courseCount">20+</h3>
+                    <p class="text-muted">Ders</p>
+                </div>
+                <div class="card text-center">
+                    <div class="feature-icon">👨‍🏫</div>
+                    <h3 id="profCount">10+</h3>
+                    <p class="text-muted">Hoca</p>
+                </div>
+                <div class="card text-center">
+                    <div class="feature-icon">🎉</div>
+                    <h3 id="activityCount">15+</h3>
+                    <p class="text-muted">Etkinlik</p>
+                </div>
+                <div class="card text-center">
+                    <div class="feature-icon">💬</div>
+                    <h3 id="kbCount">50+</h3>
+                    <p class="text-muted">Bilgi Girişi</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="container mt-3 mb-3">
+            <div class="card text-center" style="padding: 3rem;">
+                <h2>🚀 Hemen Başla!</h2>
+                <p class="text-muted mb-2">UNİTE ile üniversite hayatını kolaylaştır</p>
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="/chatbot.html" class="btn btn-accent">💬 Soru Sor</a>
+                    <a href="/matching.html" class="btn btn-primary">👥 Mentör Bul</a>
+                    <a href="/activities.html" class="btn btn-secondary">🎉 Etkinliklere Katıl</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/main.js"></script>
+    <script>
+        // Load stats on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Fetch data counts (basic implementation)
+                const API_URL = 'http://localhost:3000/api';
+                
+                // In real implementation, these would be actual API calls
+                // For now, showing the default values from seed data
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eşleştirme - UNİTE</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <nav>
+        <div class="container">
+            <div class="logo">🎓 UNİTE</div>
+            <ul class="nav-links">
+                <li><a href="/">Ana Sayfa</a></li>
+                <li><a href="/chatbot.html">Chatbot</a></li>
+                <li><a href="/courses.html">Dersler</a></li>
+                <li><a href="/professors.html">Hocalar</a></li>
+                <li><a href="/matching.html" class="active">Eşleştirme</a></li>
+                <li><a href="/activities.html">Etkinlikler</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="hero" style="padding: 2rem 0;">
+                <h1>👥 Öğrenci Eşleştirme</h1>
+                <p>Mentörlük ve Çalışma Grubu Sistemi</p>
+            </div>
+
+            <div class="grid grid-2">
+                <!-- Info Card -->
+                <div class="card" style="grid-column: 1 / -1;">
+                    <h3>🎯 Nasıl Çalışır?</h3>
+                    <div class="grid grid-3 mt-2">
+                        <div style="text-align: center;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">📝</div>
+                            <h4 style="font-size: 1.1rem;">1. Profil Oluştur</h4>
+                            <p class="text-muted" style="font-size: 0.9rem;">Aldığınız dersleri ve ilgi alanlarınızı
+                                belirtin</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+                            <h4 style="font-size: 1.1rem;">2. Eşleştirme Bul</h4>
+                            <p class="text-muted" style="font-size: 0.9rem;">Yapay zeka size uygun öğrencileri bulur</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">💬</div>
+                            <h4 style="font-size: 1.1rem;">3. İletişime Geç</h4>
+                            <p class="text-muted" style="font-size: 0.9rem;">Mentor bulun, not paylaşın, çalışma grubu
+                                oluşturun</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Demo Matching -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">🔍 Demo: Eşleştirme Bul</h3>
+                        <p class="card-description">Örnek bir öğrenci için eşleştirme</p>
+                    </div>
+                    <button class="btn btn-accent" style="width: 100%;" onclick="findMatches()">
+                        Eşleşmeleri Gör
+                    </button>
+                    <div id="matchesResult" class="mt-2"></div>
+                </div>
+
+                <!-- Features -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">✨ Özellikler</h3>
+                    </div>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 0.75rem 0; border-bottom: 1px solid var(--glass-border);">
+                            <strong>📚 Ders Bazlı Eşleştirme</strong><br />
+                            <span class="text-muted" style="font-size: 0.9rem;">Aldığınız dersi almış öğrencilerle
+                                tanışın</span>
+                        </li>
+                        <li style="padding: 0.75rem 0; border-bottom: 1px solid var(--glass-border);">
+                            <strong>📝 Not Paylaşımı</strong><br />
+                            <span class="text-muted" style="font-size: 0.9rem;">Ders notları olan öğrenciler öncelikli
+                                gösterilir</span>
+                        </li>
+                        <li style="padding: 0.75rem 0; border-bottom: 1px solid var(--glass-border);">
+                            <strong>👥 Mentorluk Sistemi</strong><br />
+                            <span class="text-muted" style="font-size: 0.9rem;">Üst sınıflardan deneyimli öğrencilerle
+                                eşleşin</span>
+                        </li>
+                        <li style="padding: 0.75rem 0;">
+                            <strong>🎯 Çalışma Grupları</strong><br />
+                            <span class="text-muted" style="font-size: 0.9rem;">Ortak ilgi alanlarına göre grup
+                                oluşturun</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Student Cards Demo -->
+            <div id="studentsGrid" class="grid grid-3 mt-3" style="display: none;"></div>
+        </div>
+    </main>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        const studentsGrid = document.getElementById('studentsGrid');
+        const matchesResult = document.getElementById('matchesResult');
+
+        async function findMatches() {
+            matchesResult.innerHTML = '<div class="spinner" style="margin: 1rem auto;"></div>';
+            studentsGrid.style.display = 'none';
+
+            try {
+                // Get all students as demo
+                const response = await fetch(`${API_URL}/students`);
+                const students = await response.json();
+
+                if (students.length === 0) {
+                    matchesResult.innerHTML = '<p class="text-muted text-center">Henüz kayıtlı öğrenci yok</p>';
+                    return;
+                }
+
+                matchesResult.innerHTML = `
+                    <div class="text-center" style="padding: 1rem; background: var(--glass-bg); border-radius: var(--radius-md);">
+                        <p style="color: var(--primary-light); font-weight: 600;">✅ ${students.length} eşleştirme bulundu!</p>
+                    </div>
+                `;
+
+                displayStudents(students.slice(0, 6));
+            } catch (error) {
+                console.error('Error finding matches:', error);
+                matchesResult.innerHTML = '<p class="text-muted text-center">❌ Eşleştirme sırasında hata oluştu</p>';
+            }
+        }
+
+        function displayStudents(students) {
+            studentsGrid.style.display = 'grid';
+            studentsGrid.innerHTML = students.map(student => `
+                <div class="card">
+                    <div class="text-center mb-2">
+                        <div style="width: 60px; height: 60px; margin: 0 auto; background: var(--gradient-secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                            👤
+                        </div>
+                    </div>
+                    <h4 style="text-align: center; font-size: 1.1rem; margin-bottom: 0.5rem;">${student.name}</h4>
+                    <p class="text-center text-muted" style="font-size: 0.9rem; margin-bottom: 1rem;">
+                        ${student.year}. Sınıf - ${student.department}
+                    </p>
+
+                    ${student.interests && student.interests.length > 0 ? `
+                        <div class="mb-1">
+                            <strong style="font-size: 0.9rem;">İlgi Alanları:</strong>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
+                                ${student.interests.slice(0, 3).map(interest => `
+                                    <span class="badge badge-secondary" style="font-size: 0.8rem;">${interest}</span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    ${student.matchingPreferences?.willingToMentor ? `
+                        <div class="mt-1">
+                            <span class="badge badge-success" style="font-size: 0.85rem;">✅ Mentorluk Veriyor</span>
+                        </div>
+                    ` : ''}
+
+                    <button class="btn btn-primary mt-2" style="width: 100%;">
+                        İletişime Geç
+                    </button>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+
+</html>
