@@ -279,9 +279,8 @@ MIT License
 
 ## 👥 Proje Ekibi
 
-- **Proje Yürütücüsü**: [İsim]
-- **Danışman**: [İsim]
-- **Ekip Üyeleri**: [İsimler]
+- **Proje Yürütücüsü**: [Ahmet EFE]
+
 
 ## 📧 İletişim
 
